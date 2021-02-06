@@ -83,8 +83,8 @@ public class ShoppingListRepository {
                 .first();
     }
 
-    private <T> List<T> asList(MongoCursor<T> cursor) {
-        final List<T> result = new ArrayList<>();
+    private List<ShoppingList> asList(MongoCursor<ShoppingList> cursor) {
+        final List<ShoppingList> result = new ArrayList<>();
         cursor.forEachRemaining(result::add);
         return result;
     }
