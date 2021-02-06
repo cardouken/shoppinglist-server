@@ -4,6 +4,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.ReplaceOptions;
+import com.mongodb.client.result.UpdateResult;
 import ee.hein.shoppinglistserver.persistence.MongoService;
 import ee.hein.shoppinglistserver.persistence.entity.ShoppingList;
 import org.bson.types.ObjectId;
@@ -11,8 +12,13 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.in;
+import static com.mongodb.client.model.Sorts.ascending;
+import static com.mongodb.client.model.Sorts.descending;
 
 @Repository
 public class ShoppingListRepository {
@@ -39,9 +45,28 @@ public class ShoppingListRepository {
 
     public List<ShoppingList> list() {
         final MongoCursor<ShoppingList> cursor = collection.find()
+                .sort(ascending("order"))
                 .cursor();
         return asList(cursor);
+    }
 
+    public Optional<ShoppingList> findOne(ObjectId shoppingListId) {
+        return Optional.ofNullable(collection.find(
+                eq("_id", shoppingListId)
+        ).first());
+    }
+
+    public boolean update(ShoppingList shoppingList, long expectedVersion) {
+        final UpdateResult updateResult = collection.replaceOne(
+                and(
+                        eq("_id", shoppingList.getId()),
+                        eq("version", expectedVersion)
+                ),
+                shoppingList,
+                new ReplaceOptions().upsert(false)
+        );
+
+        return updateResult.getModifiedCount() == 1;
     }
 
     private static <T> List<T> asList(MongoCursor<T> cursor) {
@@ -50,9 +75,16 @@ public class ShoppingListRepository {
         return result;
     }
 
-    public ShoppingList findOne(ObjectId shoppingListId) {
-        return collection.find(
-                eq("_id", shoppingListId)
-        ).first();
+    public void delete(List<ObjectId> shoppingListIds) {
+        collection.deleteMany(
+                in("_id", shoppingListIds)
+        );
+    }
+
+    public ShoppingList getHighestOrderedItem() {
+        return collection.find()
+                .sort(descending("order"))
+                .limit(1)
+                .first();
     }
 }

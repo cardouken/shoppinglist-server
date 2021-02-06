@@ -14,6 +14,7 @@ public class ShoppingListResourceFactory {
         return new ShoppingListResource()
                 .setId(shoppingList.getId())
                 .setName(shoppingList.getName())
-                .setItems(shoppingList.getItems());
+                .setItems(shoppingList.getItems())
+                .setOrder(shoppingList.getOrder());
     }
 }

@@ -1,6 +1,6 @@
 package ee.hein.shoppinglistserver.controller.api.resource;
 
-import ee.hein.shoppinglistserver.persistence.entity.Item;
+import ee.hein.shoppinglistserver.pojo.Item;
 import org.bson.types.ObjectId;
 
 import java.util.List;
@@ -10,6 +10,7 @@ public class ShoppingListResource {
     private ObjectId id;
     private String name;
     private List<Item> items;
+    private int order;
 
     public ObjectId getId() {
         return id;
@@ -35,6 +36,15 @@ public class ShoppingListResource {
 
     public ShoppingListResource setItems(List<Item> items) {
         this.items = items;
+        return this;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public ShoppingListResource setOrder(int order) {
+        this.order = order;
         return this;
     }
 }

@@ -8,11 +8,11 @@ public class ShoppingListsResponse {
 
     private List<ShoppingListResource> lists;
 
-    public List<ShoppingListResource> getLists() {
+    public List<ShoppingListResource> getShoppingLists() {
         return lists;
     }
 
-    public ShoppingListsResponse setLists(List<ShoppingListResource> lists) {
+    public ShoppingListsResponse setShoppingLists(List<ShoppingListResource> lists) {
         this.lists = lists;
         return this;
     }
