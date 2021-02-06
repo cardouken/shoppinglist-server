@@ -4,6 +4,7 @@ import ee.hein.shoppinglistserver.controller.api.request.UpdateShoppingListReque
 import ee.hein.shoppinglistserver.controller.api.resource.ShoppingListResource;
 import ee.hein.shoppinglistserver.pojo.Item;
 import ee.hein.shoppinglistserver.service.ShoppingListService;
+import ee.hein.shoppinglistserver.util.TestActionBuilder;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class UpdateShoppingListBuilder {
+public class UpdateShoppingListBuilder implements TestActionBuilder<Void> {
 
     private final ShoppingListService shoppingListService;
     private final List<Item> items = new ArrayList<>();
@@ -38,12 +39,14 @@ public class UpdateShoppingListBuilder {
         return this;
     }
 
-    public void build() {
+    @Override
+    public Void build() {
         shoppingListService.update(
                 new UpdateShoppingListRequest()
                         .setShoppingListId(Objects.requireNonNull(shoppingListId))
                         .setName(Objects.requireNonNull(name))
                         .setItems(Objects.requireNonNull(items))
         );
+        return empty();
     }
 }

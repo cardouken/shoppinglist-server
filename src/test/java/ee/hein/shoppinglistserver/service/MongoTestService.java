@@ -15,9 +15,6 @@ public class MongoTestService extends MongoService {
     @Autowired
     public MongoTestService(MongoClient mongoClient, MongoProperties mongoProperties) {
         super(mongoClient, mongoProperties.getDatabase());
-        if (!mongoProperties.getUri().contains("localhost") && !mongoProperties.getUri().contains("127.0.0.1")) {
-            throw new RuntimeException("Non localhost database connection detected in tests! Actual connection string: " + mongoProperties.getUri());
-        }
         database.drop();
     }
 

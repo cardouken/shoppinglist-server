@@ -45,4 +45,14 @@ public class Item {
         this.checked = checked;
         return this;
     }
+
+    public Item markCheckedNow() {
+        this.checked = LocalDateTime.now();
+        return this;
+    }
+
+    public Item markUnchecked() {
+        this.checked = null;
+        return this;
+    }
 }

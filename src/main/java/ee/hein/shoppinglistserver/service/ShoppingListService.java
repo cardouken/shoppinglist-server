@@ -10,10 +10,12 @@ import ee.hein.shoppinglistserver.controller.response.ShoppingListsResponse;
 import ee.hein.shoppinglistserver.exception.ApplicationLogicException;
 import ee.hein.shoppinglistserver.persistence.entity.ShoppingList;
 import ee.hein.shoppinglistserver.persistence.repository.ShoppingListRepository;
+import ee.hein.shoppinglistserver.pojo.Item;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,12 +37,16 @@ public class ShoppingListService {
 
     public void create(CreateShoppingListRequest request) {
         int order = Optional.ofNullable(shoppingListRepository.getHighestOrderedItem()).map(ShoppingList::getOrder).orElse(0);
+        final List<Item> items = request.getItems();
+        items.forEach(item -> item.setId(new ObjectId()));
+
         shoppingListRepository.save(
                 new ShoppingList()
                         .setId(new ObjectId())
                         .setName(request.getName())
                         .setItems(request.getItems())
                         .setOrder(++order)
+                        .setCreated(LocalDateTime.now())
         );
     }
 
@@ -54,20 +60,31 @@ public class ShoppingListService {
                 .setShoppingLists(shoppingListResources);
     }
 
+    public ShoppingListResource findOne(ObjectId shoppingListId) {
+        final ShoppingList shoppingList = shoppingListRepository.findOne(shoppingListId)
+                .orElseThrow(EntityNotFoundException::new);
+
+        return shoppingListResourceFactory.create(shoppingList);
+    }
+
     public void update(UpdateShoppingListRequest request) {
         final ShoppingList shoppingList = shoppingListRepository.findOne(request.getShoppingListId())
                 .orElseThrow(EntityNotFoundException::new);
 
-        shoppingList.setItems(request.getItems());
+        final List<Item> requestedItems = request.getItems();
+        final List<Item> existingItems = shoppingList.getItems();
+        for (Item existingItem : existingItems) {
+            for (Item requestedItem : requestedItems) {
+                if (requestedItem.getChecked() != null && existingItem.getChecked() != null) {
+                    requestedItem.setChecked(existingItem.getChecked());
+                }
+            }
+        }
+
+        shoppingList.setItems(requestedItems);
         if (!shoppingListRepository.update(shoppingList, shoppingList.incrementVersion())) {
             throw new ApplicationLogicException(ApplicationLogicException.ErrorCode.RETRY);
         }
-    }
-
-    public ShoppingListResource get(ObjectId shoppingListId) {
-        final ShoppingList shoppingList = shoppingListRepository.findOne(shoppingListId)
-                .orElseThrow(EntityNotFoundException::new);
-        return shoppingListResourceFactory.create(shoppingList);
     }
 
     public void delete(DeleteShoppingListRequest request) {
@@ -89,10 +106,7 @@ public class ShoppingListService {
             shoppingListIdOrderMap.put(folderId, order++);
         }
 
-        for (Map.Entry<ObjectId, Integer> shoppingListIdAndOrder : shoppingListIdOrderMap.entrySet()) {
-            final ObjectId requestedShoppingId = shoppingListIdAndOrder.getKey();
-            final Integer requestedOrder = shoppingListIdAndOrder.getValue();
-
+        shoppingListIdOrderMap.forEach((requestedShoppingId, requestedOrder) -> {
             for (ShoppingList shoppingList : shoppingLists) {
                 if (Objects.equals(shoppingList.getId(), requestedShoppingId) && !Objects.equals(shoppingList.getOrder(), requestedOrder)) {
                     shoppingList.setOrder(requestedOrder);
@@ -101,6 +115,6 @@ public class ShoppingListService {
                     }
                 }
             }
-        }
+        });
     }
 }

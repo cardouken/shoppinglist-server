@@ -9,7 +9,7 @@ import ee.hein.shoppinglistserver.usecase.CreateShoppingListBuilder;
 import ee.hein.shoppinglistserver.usecase.DeleteShoppingListBuilder;
 import ee.hein.shoppinglistserver.usecase.GetShoppingListBuilder;
 import ee.hein.shoppinglistserver.usecase.GetAllShoppingListsBuilder;
-import ee.hein.shoppinglistserver.usecase.OrderShoppingListsBuilder;
+import ee.hein.shoppinglistserver.usecase.ReorderShoppingListsBuilder;
 import ee.hein.shoppinglistserver.usecase.UpdateShoppingListBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = {ShoppinglistServerApplication.class})
+@ContextConfiguration(classes = ShoppinglistServerApplication.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(BaseTest.TEST_PROFILE)
 public abstract class BaseTest {
@@ -65,8 +65,8 @@ public abstract class BaseTest {
         return new DeleteShoppingListBuilder(shoppingListService);
     }
 
-    public OrderShoppingListsBuilder orderShoppingLists() {
-        return new OrderShoppingListsBuilder(shoppingListService);
+    public ReorderShoppingListsBuilder orderShoppingLists() {
+        return new ReorderShoppingListsBuilder(shoppingListService);
     }
 
 }

@@ -2,9 +2,10 @@ package ee.hein.shoppinglistserver.usecase;
 
 import ee.hein.shoppinglistserver.controller.api.resource.ShoppingListResource;
 import ee.hein.shoppinglistserver.service.ShoppingListService;
+import ee.hein.shoppinglistserver.util.TestActionBuilder;
 import org.bson.types.ObjectId;
 
-public class GetShoppingListBuilder {
+public class GetShoppingListBuilder implements TestActionBuilder<ShoppingListResource> {
 
     private final ShoppingListService shoppingListService;
     private ObjectId shoppingListId;
@@ -18,7 +19,8 @@ public class GetShoppingListBuilder {
         return this;
     }
 
+    @Override
     public ShoppingListResource build() {
-        return shoppingListService.get(shoppingListId);
+        return shoppingListService.findOne(shoppingListId);
     }
 }
