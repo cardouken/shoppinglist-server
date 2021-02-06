@@ -6,6 +6,7 @@ import ee.hein.shoppinglistserver.persistence.entity.ShoppingList;
 import ee.hein.shoppinglistserver.persistence.repository.ShoppingListRepository;
 import ee.hein.shoppinglistserver.pojo.Item;
 import ee.hein.shoppinglistserver.service.ShoppingListService;
+import ee.hein.shoppinglistserver.util.TestActionBuilder;
 import net.bytebuddy.utility.RandomString;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class CreateShoppingListBuilder {
+public class CreateShoppingListBuilder implements TestActionBuilder<ShoppingListResource> {
 
     private final ShoppingListService shoppingListService;
     private final ShoppingListRepository shoppingListRepository;
@@ -35,6 +36,7 @@ public class CreateShoppingListBuilder {
         return this;
     }
 
+    @Override
     public ShoppingListResource build() {
         shoppingListService.create(
                 new CreateShoppingListRequest()
@@ -47,6 +49,7 @@ public class CreateShoppingListBuilder {
                 .setId(shoppingList.getId())
                 .setName(shoppingList.getName())
                 .setItems(shoppingList.getItems())
-                .setOrder(shoppingList.getOrder());
+                .setOrder(shoppingList.getOrder())
+                .setCreated(shoppingList.getCreated());
     }
 }

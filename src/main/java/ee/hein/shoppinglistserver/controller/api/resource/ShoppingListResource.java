@@ -3,6 +3,7 @@ package ee.hein.shoppinglistserver.controller.api.resource;
 import ee.hein.shoppinglistserver.pojo.Item;
 import org.bson.types.ObjectId;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ShoppingListResource {
@@ -11,6 +12,7 @@ public class ShoppingListResource {
     private String name;
     private List<Item> items;
     private int order;
+    private LocalDateTime created;
 
     public ObjectId getId() {
         return id;
@@ -45,6 +47,15 @@ public class ShoppingListResource {
 
     public ShoppingListResource setOrder(int order) {
         this.order = order;
+        return this;
+    }
+
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+    public ShoppingListResource setCreated(LocalDateTime created) {
+        this.created = created;
         return this;
     }
 }

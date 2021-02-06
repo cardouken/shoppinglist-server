@@ -6,6 +6,7 @@ import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.types.ObjectId;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ShoppingList {
@@ -22,6 +23,8 @@ public class ShoppingList {
     private List<Item> items;
 
     private long version;
+
+    private LocalDateTime created;
 
     public ShoppingList() {
         this.version = 1L;
@@ -69,6 +72,15 @@ public class ShoppingList {
 
     public ShoppingList setVersion(long version) {
         this.version = version;
+        return this;
+    }
+
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+    public ShoppingList setCreated(LocalDateTime created) {
+        this.created = created;
         return this;
     }
 

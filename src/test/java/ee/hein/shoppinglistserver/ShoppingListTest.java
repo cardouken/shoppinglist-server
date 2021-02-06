@@ -1,15 +1,39 @@
 package ee.hein.shoppinglistserver;
 
 import ee.hein.shoppinglistserver.controller.api.resource.ShoppingListResource;
-import ee.hein.shoppinglistserver.controller.response.ShoppingListsResponse;
 import ee.hein.shoppinglistserver.pojo.Item;
 import ee.hein.shoppinglistserver.util.ExpectedException;
-import junit.framework.Assert;
 import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 
 public class ShoppingListTest extends BaseTest {
+
+    @Test
+    public void test_api_fields() {
+        // given
+        final Item item = createItem("banana peels", false).build();
+        final ShoppingListResource shoppingList = createShoppingList().addItems(item).setName("big list").build();
+
+        // when -> then - assert all api fields with unchecked item
+        getShoppingList(shoppingList).buildApi()
+                .assertThat("id", shoppingList.getId().toHexString())
+                .assertThat("name", shoppingList.getName())
+                .assertThat("order", "1")
+                .assertExists("created")
+                .assertNotExists("version")
+                .separator()
+                .assertThatArraySize("items", 1)
+                .assertThat("items[0].id", item.getId().toHexString())
+                .assertThat("items[0].name", item.getName())
+                .assertNotExists("items[0].checked");
+
+        // then - mark item as checked and assert checked field
+        updateShoppingList(shoppingList).withItems(item.markCheckedNow()).build();
+        getShoppingList(shoppingList).buildApi()
+                .assertExists("items[0].checked");
+    }
 
     @Test
     public void create_empty_list() {
@@ -20,12 +44,11 @@ public class ShoppingListTest extends BaseTest {
         final ShoppingListResource shoppingList = createShoppingList().setName(name).build();
 
         // then
-        final ShoppingListsResponse shoppingListsResponse = getAllShoppingLists().build();
-
-        Assert.assertEquals(shoppingList.getId(), shoppingListsResponse.getShoppingLists().get(0).getId());
-        Assert.assertEquals(shoppingList.getName(), shoppingListsResponse.getShoppingLists().get(0).getName());
-        Assert.assertEquals(1, shoppingListsResponse.getShoppingLists().size());
-        Assert.assertEquals(0, shoppingListsResponse.getShoppingLists().get(0).getItems().size());
+        getAllShoppingLists().buildApi()
+                .assertThatArraySize("lists", 1)
+                .assertThatArraySize("lists[0].items", 0)
+                .assertThat("lists[0].id", shoppingList.getId().toHexString())
+                .assertThat("lists[0].name", shoppingList.getName());
     }
 
     @Test
@@ -36,12 +59,10 @@ public class ShoppingListTest extends BaseTest {
         final ShoppingListResource shoppingList = createShoppingList().addItems(cream, hammer).build();
 
         // when
-        final ShoppingListResource response = getShoppingList(shoppingList).build();
-
-        // then
-        Assert.assertEquals(2, response.getItems().size());
-        Assert.assertEquals(cream.getName(), response.getItems().get(0).getName());
-        Assert.assertEquals(hammer.getName(), response.getItems().get(1).getName());
+        getShoppingList(shoppingList).buildApi()
+                .assertThatArraySize("items", 2)
+                .assertThat("items[0].name", cream.getName())
+                .assertThat("items[1].name", hammer.getName());
     }
 
     @Test
@@ -50,26 +71,22 @@ public class ShoppingListTest extends BaseTest {
         createShoppingList().build();
         final ShoppingListResource secondShoppingList = createShoppingList().build();
 
-        // when
-        final ShoppingListResource response = getShoppingList(secondShoppingList).build();
-
-        // then
-        Assert.assertEquals(secondShoppingList.getId(), response.getId());
+        // when -> then
+        getShoppingList(secondShoppingList).buildApi()
+                .assertThat("id", secondShoppingList.getId().toHexString());
     }
 
     @Test
     public void get_all_lists() {
         // given
-        final ShoppingListResource firstShoppingList = createShoppingList().setName("third").build();
-        final ShoppingListResource secondShoppingList = createShoppingList().setName("fourth").build();
+        final ShoppingListResource firstShoppingList = createShoppingList().build();
+        final ShoppingListResource secondShoppingList = createShoppingList().build();
 
-        // when
-        final ShoppingListsResponse response = getAllShoppingLists().build();
-
-        // then
-        Assert.assertEquals(2, response.getShoppingLists().size());
-        Assert.assertEquals(firstShoppingList.getId(), response.getShoppingLists().get(0).getId());
-        Assert.assertEquals(secondShoppingList.getId(), response.getShoppingLists().get(1).getId());
+        // when -> then
+        getAllShoppingLists().buildApi()
+                .assertThatArraySize("lists", 2)
+                .assertThat("lists[0].id", firstShoppingList.getId().toHexString())
+                .assertThat("lists[1].id", secondShoppingList.getId().toHexString());
     }
 
     @Test
@@ -84,11 +101,11 @@ public class ShoppingListTest extends BaseTest {
         updateShoppingList(shoppingList).withItems(cream, hammer, manholeCover).build();
 
         // then
-        final ShoppingListResource response = getShoppingList(shoppingList).build();
-        Assert.assertEquals(3, response.getItems().size());
-        Assert.assertEquals(cream.getName(), response.getItems().get(0).getName());
-        Assert.assertEquals(hammer.getName(), response.getItems().get(1).getName());
-        Assert.assertEquals(manholeCover.getName(), response.getItems().get(2).getName());
+        getShoppingList(shoppingList).buildApi()
+                .assertThatArraySize("items", 3)
+                .assertThat("items[0].id", cream.getId().toHexString())
+                .assertThat("items[1].id", hammer.getId().toHexString())
+                .assertThat("items[2].id", manholeCover.getId().toHexString());
     }
 
     @Test
@@ -103,10 +120,10 @@ public class ShoppingListTest extends BaseTest {
         updateShoppingList(shoppingList).withItems(cream, hammer).build();
 
         // then
-        final ShoppingListResource response = getShoppingList(shoppingList).build();
-        Assert.assertEquals(2, response.getItems().size());
-        Assert.assertEquals(cream.getName(), response.getItems().get(0).getName());
-        Assert.assertEquals(hammer.getName(), response.getItems().get(1).getName());
+        getShoppingList(shoppingList).buildApi()
+                .assertThatArraySize("items", 2)
+                .assertThat("items[0].id", cream.getId().toHexString())
+                .assertThat("items[1].id", hammer.getId().toHexString());
     }
 
     @Test
@@ -121,8 +138,46 @@ public class ShoppingListTest extends BaseTest {
         updateShoppingList(shoppingList).withItems().build();
 
         // then
-        final ShoppingListResource response = getShoppingList(shoppingList).build();
-        Assert.assertEquals(0, response.getItems().size());
+        getShoppingList(shoppingList).buildApi()
+                .assertThatArraySize("items", 0);
+    }
+
+    @Test
+    public void mark_items_checked() {
+        // given
+        final Item cream = createItem("cream", false).build();
+        final Item hammer = createItem("hammer", false).build();
+        final Item manholeCover = createItem("manhole cover", false).build();
+        final ShoppingListResource shoppingList = createShoppingList().addItems(cream, hammer, manholeCover).build();
+
+        // when
+        updateShoppingList(shoppingList).withItems(cream.markCheckedNow(), hammer.markCheckedNow(), manholeCover.markCheckedNow()).build();
+
+        // then
+        getShoppingList(shoppingList).buildApi()
+                .assertThatArraySize("items", 3)
+                .assertExists("items[0].checked")
+                .assertExists("items[1].checked")
+                .assertExists("items[2].checked");
+    }
+
+    @Test
+    public void mark_items_unchecked() {
+        // given
+        final Item cream = createItem("cream", true).build();
+        final Item hammer = createItem("hammer", true).build();
+        final Item manholeCover = createItem("manhole cover", true).build();
+        final ShoppingListResource shoppingList = createShoppingList().addItems(cream, hammer, manholeCover).build();
+
+        // when
+        updateShoppingList(shoppingList).withItems(cream.markUnchecked(), hammer.markUnchecked(), manholeCover.markUnchecked()).build();
+
+        // then
+        getShoppingList(shoppingList).buildApi()
+                .assertThatArraySize("items", 3)
+                .assertNotExists("items[0].checked")
+                .assertNotExists("items[1].checked")
+                .assertNotExists("items[2].checked");
     }
 
     @Test
@@ -147,9 +202,9 @@ public class ShoppingListTest extends BaseTest {
         deleteShoppingLists().shoppingLists(listToDelete).build();
 
         // then
-        final ShoppingListsResponse response = getAllShoppingLists().build();
-        Assert.assertEquals(1, response.getShoppingLists().size());
-        Assert.assertEquals(shoppingList.getId(), response.getShoppingLists().get(0).getId());
+        getAllShoppingLists().buildApi()
+                .assertThatArraySize("lists", 1)
+                .assertThat("lists[0].id", shoppingList.getId().toHexString());
     }
 
     @Test
@@ -162,8 +217,8 @@ public class ShoppingListTest extends BaseTest {
         deleteShoppingLists().shoppingLists(firstList, secondList).build();
 
         // then
-        final ShoppingListsResponse response = getAllShoppingLists().build();
-        Assert.assertEquals(0, response.getShoppingLists().size());
+        getAllShoppingLists().buildApi()
+                .assertThatArraySize("lists", 0);
     }
 
     @Test
@@ -174,21 +229,16 @@ public class ShoppingListTest extends BaseTest {
         final ShoppingListResource third = createShoppingList().build();
         final ShoppingListResource fourth = createShoppingList().build();
 
-        // when
-        final ShoppingListsResponse response = getAllShoppingLists().build();
-
-        // then
-        Assert.assertEquals(1, response.getShoppingLists().get(0).getOrder());
-        Assert.assertEquals(first.getId(), response.getShoppingLists().get(0).getId());
-
-        Assert.assertEquals(2, response.getShoppingLists().get(1).getOrder());
-        Assert.assertEquals(second.getId(), response.getShoppingLists().get(1).getId());
-
-        Assert.assertEquals(3, response.getShoppingLists().get(2).getOrder());
-        Assert.assertEquals(third.getId(), response.getShoppingLists().get(2).getId());
-
-        Assert.assertEquals(4, response.getShoppingLists().get(3).getOrder());
-        Assert.assertEquals(fourth.getId(), response.getShoppingLists().get(3).getId());
+        // when -> then
+        getAllShoppingLists().buildApi()
+                .assertThat("lists[0].id", first.getId().toHexString())
+                .assertThat("lists[0].order", "1")
+                .assertThat("lists[1].id", second.getId().toHexString())
+                .assertThat("lists[1].order", "2")
+                .assertThat("lists[2].id", third.getId().toHexString())
+                .assertThat("lists[2].order", "3")
+                .assertThat("lists[3].id", fourth.getId().toHexString())
+                .assertThat("lists[3].order", "4");
     }
 
     @Test
@@ -203,18 +253,45 @@ public class ShoppingListTest extends BaseTest {
         orderShoppingLists().setShoppingLists(first, third, second, fourth).build();
 
         // then
-        final ShoppingListsResponse response = getAllShoppingLists().build();
-        Assert.assertEquals(1, response.getShoppingLists().get(0).getOrder());
-        Assert.assertEquals(first.getId(), response.getShoppingLists().get(0).getId());
+        getAllShoppingLists().buildApi()
+                .assertThat("lists[0].id", first.getId().toHexString())
+                .assertThat("lists[0].order", "1")
+                .assertThat("lists[1].id", third.getId().toHexString())
+                .assertThat("lists[1].order", "2")
+                .assertThat("lists[2].id", second.getId().toHexString())
+                .assertThat("lists[2].order", "3")
+                .assertThat("lists[3].id", fourth.getId().toHexString())
+                .assertThat("lists[3].order", "4");
+    }
 
-        Assert.assertEquals(2, response.getShoppingLists().get(1).getOrder());
-        Assert.assertEquals(third.getId(), response.getShoppingLists().get(1).getId());
+    @Test
+    public void mark_item_checked_twice() {
+        // given
+        final LocalDateTime fakeCheckedTime = LocalDateTime.of(2010, 10, 10, 13, 37);
+        final Item item = createItem("t-rex skeleton", true).setCheckedTime(fakeCheckedTime).build();
+        final ShoppingListResource shoppingList = createShoppingList().addItems(item).build();
 
-        Assert.assertEquals(3, response.getShoppingLists().get(2).getOrder());
-        Assert.assertEquals(second.getId(), response.getShoppingLists().get(2).getId());
+        // when
+        updateShoppingList(shoppingList).withItems(item.markCheckedNow()).build();
 
-        Assert.assertEquals(4, response.getShoppingLists().get(3).getOrder());
-        Assert.assertEquals(fourth.getId(), response.getShoppingLists().get(3).getId());
+        // then
+        getShoppingList(shoppingList).buildApi()
+                .assertThatStartsWith("items[0].checked", "2010-10-10T13:37");
+    }
+
+    @Test
+    public void mark_item_checked_then_unchecked() {
+        // given
+        final Item item = createItem("t-rex skeleton", false).build();
+        final ShoppingListResource shoppingList = createShoppingList().addItems(item).build();
+        updateShoppingList(shoppingList).withItems(item.markCheckedNow()).build();
+
+        // when
+        updateShoppingList(shoppingList).withItems(item.setChecked(null)).build();
+
+        // then
+        getShoppingList(shoppingList).buildApi()
+                .assertNotExists("items[0].checked");
     }
 
 }

@@ -27,10 +27,6 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 @Configuration
 public class MongoConfiguration {
 
-    private List<Codec<?>> mongoCodecs() {
-        return List.of();
-    }
-
     @Bean
     @Primary
     public MongoProperties mongoProperties(DatabaseProperties properties) {
@@ -49,10 +45,8 @@ public class MongoConfiguration {
 
     @Bean
     public MongoClient mongoClient(MongoProperties mongoProperties) {
-        final CodecRegistry customCodecs = CodecRegistries.fromCodecs(mongoCodecs());
-
         CodecRegistry pojoCodecs = fromProviders(PojoCodecProvider.builder().conventions(List.of(Conventions.ANNOTATION_CONVENTION)).automatic(true).build());
-        CodecRegistry codecRegistry = fromRegistries(getDefaultCodecRegistry(), customCodecs, pojoCodecs);
+        CodecRegistry codecRegistry = fromRegistries(getDefaultCodecRegistry(), pojoCodecs);
 
         MongoClientSettings settings = MongoClientSettings.builder()
                 .applyConnectionString(new ConnectionString(mongoProperties.getUri()))

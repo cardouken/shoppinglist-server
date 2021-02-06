@@ -39,7 +39,7 @@ public class ShoppingListController {
 
     @GetMapping(value = "/shopping-list/get/{id}")
     public ShoppingListResource getList(@PathVariable ObjectId id) {
-        return shoppingListService.get(id);
+        return shoppingListService.findOne(id);
     }
 
     @PutMapping(value = "/shopping-list/update")

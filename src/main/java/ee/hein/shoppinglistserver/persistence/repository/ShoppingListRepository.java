@@ -69,12 +69,6 @@ public class ShoppingListRepository {
         return updateResult.getModifiedCount() == 1;
     }
 
-    private static <T> List<T> asList(MongoCursor<T> cursor) {
-        List<T> result = new ArrayList<>();
-        cursor.forEachRemaining(result::add);
-        return result;
-    }
-
     public void delete(List<ObjectId> shoppingListIds) {
         collection.deleteMany(
                 in("_id", shoppingListIds)
@@ -86,5 +80,11 @@ public class ShoppingListRepository {
                 .sort(descending("order"))
                 .limit(1)
                 .first();
+    }
+
+    private static <T> List<T> asList(MongoCursor<T> cursor) {
+        List<T> result = new ArrayList<>();
+        cursor.forEachRemaining(result::add);
+        return result;
     }
 }
