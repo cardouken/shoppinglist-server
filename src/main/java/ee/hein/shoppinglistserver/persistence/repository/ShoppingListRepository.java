@@ -40,10 +40,11 @@ public class ShoppingListRepository {
         collection.replaceOne(
                 eq("_id", shoppingList.getId()),
                 shoppingList,
-                new ReplaceOptions().upsert(true));
+                new ReplaceOptions().upsert(true)
+        );
     }
 
-    public List<ShoppingList> list() {
+    public List<ShoppingList> findAll() {
         final MongoCursor<ShoppingList> cursor = collection.find()
                 .sort(ascending("order"))
                 .cursor();
@@ -82,8 +83,8 @@ public class ShoppingListRepository {
                 .first();
     }
 
-    private static <T> List<T> asList(MongoCursor<T> cursor) {
-        List<T> result = new ArrayList<>();
+    private <T> List<T> asList(MongoCursor<T> cursor) {
+        final List<T> result = new ArrayList<>();
         cursor.forEachRemaining(result::add);
         return result;
     }

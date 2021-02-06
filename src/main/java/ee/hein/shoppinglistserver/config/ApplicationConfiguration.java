@@ -21,7 +21,7 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(new MappingJackson2HttpMessageConverter(JsonUtility.getMapper()));
+        converters.add(new MappingJackson2HttpMessageConverter(JsonUtility.getObjectMapper()));
     }
 
     @Bean

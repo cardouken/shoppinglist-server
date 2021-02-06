@@ -11,8 +11,8 @@ public class ShoppingListResource {
     private ObjectId id;
     private String name;
     private List<Item> items;
-    private int order;
     private LocalDateTime created;
+    private int order;
 
     public ObjectId getId() {
         return id;
@@ -41,21 +41,21 @@ public class ShoppingListResource {
         return this;
     }
 
-    public int getOrder() {
-        return order;
-    }
-
-    public ShoppingListResource setOrder(int order) {
-        this.order = order;
-        return this;
-    }
-
     public LocalDateTime getCreated() {
         return created;
     }
 
     public ShoppingListResource setCreated(LocalDateTime created) {
         this.created = created;
+        return this;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public ShoppingListResource setOrder(int order) {
+        this.order = order;
         return this;
     }
 }

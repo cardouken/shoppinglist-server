@@ -14,7 +14,6 @@ public class Item {
     }
 
     public Item(String name, LocalDateTime checked) {
-        this.id = new ObjectId();
         this.name = name;
         this.checked = checked;
     }

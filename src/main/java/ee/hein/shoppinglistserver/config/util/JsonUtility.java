@@ -28,7 +28,7 @@ import java.util.TimeZone;
 public class JsonUtility {
 
     private static final String DATETIME_JSON_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-    private static final ObjectMapper mapper;
+    private static final ObjectMapper objectMapper;
 
     private static class BsonModule extends SimpleModule {
         public BsonModule() {
@@ -73,28 +73,28 @@ public class JsonUtility {
         JavaTimeModule javaTimeModule = new JavaTimeModule();
         javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(dateTimeFormatter));
 
-        mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        mapper.registerModule(bsonModule);
-        mapper.registerModule(jdk8Module);
-        mapper.registerModule(javaTimeModule);
-        mapper.setDateFormat(simpleDateFormat);
-        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
-        mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+        objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        objectMapper.registerModule(bsonModule);
+        objectMapper.registerModule(jdk8Module);
+        objectMapper.registerModule(javaTimeModule);
+        objectMapper.setDateFormat(simpleDateFormat);
+        objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
     }
 
     public static String toJson(Object object) {
         try {
-            return mapper.writeValueAsString(object);
+            return objectMapper.writeValueAsString(object);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static ObjectMapper getMapper() {
-        return mapper;
+    public static ObjectMapper getObjectMapper() {
+        return objectMapper;
     }
 
 }

@@ -14,6 +14,6 @@ public class GetAllShoppingListsBuilder implements TestActionBuilder<ShoppingLis
 
     @Override
     public ShoppingListsResponse build() {
-        return shoppingListService.listAll();
+        return shoppingListService.findAll();
     }
 }

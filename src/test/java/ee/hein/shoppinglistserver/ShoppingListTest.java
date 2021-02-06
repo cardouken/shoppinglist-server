@@ -17,7 +17,7 @@ public class ShoppingListTest extends BaseTest {
         final ShoppingListResource shoppingList = createShoppingList().addItems(item).setName("big list").build();
 
         // when -> then - assert all api fields with unchecked item
-        getShoppingList(shoppingList).buildApi()
+        viewShoppingList(shoppingList).buildApi()
                 .assertThat("id", shoppingList.getId().toHexString())
                 .assertThat("name", shoppingList.getName())
                 .assertThat("order", "1")
@@ -31,7 +31,7 @@ public class ShoppingListTest extends BaseTest {
 
         // then - mark item as checked and assert checked field
         updateShoppingList(shoppingList).withItems(item.markCheckedNow()).build();
-        getShoppingList(shoppingList).buildApi()
+        viewShoppingList(shoppingList).buildApi()
                 .assertExists("items[0].checked");
     }
 
@@ -59,7 +59,7 @@ public class ShoppingListTest extends BaseTest {
         final ShoppingListResource shoppingList = createShoppingList().addItems(cream, hammer).build();
 
         // when
-        getShoppingList(shoppingList).buildApi()
+        viewShoppingList(shoppingList).buildApi()
                 .assertThatArraySize("items", 2)
                 .assertThat("items[0].name", cream.getName())
                 .assertThat("items[1].name", hammer.getName());
@@ -72,7 +72,7 @@ public class ShoppingListTest extends BaseTest {
         final ShoppingListResource secondShoppingList = createShoppingList().build();
 
         // when -> then
-        getShoppingList(secondShoppingList).buildApi()
+        viewShoppingList(secondShoppingList).buildApi()
                 .assertThat("id", secondShoppingList.getId().toHexString());
     }
 
@@ -101,7 +101,7 @@ public class ShoppingListTest extends BaseTest {
         updateShoppingList(shoppingList).withItems(cream, hammer, manholeCover).build();
 
         // then
-        getShoppingList(shoppingList).buildApi()
+        viewShoppingList(shoppingList).buildApi()
                 .assertThatArraySize("items", 3)
                 .assertThat("items[0].id", cream.getId().toHexString())
                 .assertThat("items[1].id", hammer.getId().toHexString())
@@ -120,7 +120,7 @@ public class ShoppingListTest extends BaseTest {
         updateShoppingList(shoppingList).withItems(cream, hammer).build();
 
         // then
-        getShoppingList(shoppingList).buildApi()
+        viewShoppingList(shoppingList).buildApi()
                 .assertThatArraySize("items", 2)
                 .assertThat("items[0].id", cream.getId().toHexString())
                 .assertThat("items[1].id", hammer.getId().toHexString());
@@ -138,8 +138,21 @@ public class ShoppingListTest extends BaseTest {
         updateShoppingList(shoppingList).withItems().build();
 
         // then
-        getShoppingList(shoppingList).buildApi()
+        viewShoppingList(shoppingList).buildApi()
                 .assertThatArraySize("items", 0);
+    }
+
+    @Test
+    public void update_list_name() {
+        // given
+        final ShoppingListResource shoppingList = createShoppingList().setName("where'd u go").build();
+
+        // when
+        updateShoppingList(shoppingList).setName("i miss u so").build();
+
+        // then
+        viewShoppingList(shoppingList).buildApi()
+                .assertThat("name", "i miss u so");
     }
 
     @Test
@@ -154,7 +167,7 @@ public class ShoppingListTest extends BaseTest {
         updateShoppingList(shoppingList).withItems(cream.markCheckedNow(), hammer.markCheckedNow(), manholeCover.markCheckedNow()).build();
 
         // then
-        getShoppingList(shoppingList).buildApi()
+        viewShoppingList(shoppingList).buildApi()
                 .assertThatArraySize("items", 3)
                 .assertExists("items[0].checked")
                 .assertExists("items[1].checked")
@@ -173,7 +186,7 @@ public class ShoppingListTest extends BaseTest {
         updateShoppingList(shoppingList).withItems(cream.markUnchecked(), hammer.markUnchecked(), manholeCover.markUnchecked()).build();
 
         // then
-        getShoppingList(shoppingList).buildApi()
+        viewShoppingList(shoppingList).buildApi()
                 .assertThatArraySize("items", 3)
                 .assertNotExists("items[0].checked")
                 .assertNotExists("items[1].checked")
@@ -187,7 +200,7 @@ public class ShoppingListTest extends BaseTest {
 
         // when -> then
         ExpectedException.expect(
-                () -> getShoppingList(nonExistentList).build(),
+                () -> viewShoppingList(nonExistentList).build(),
                 EntityNotFoundException.class
         );
     }
@@ -275,7 +288,7 @@ public class ShoppingListTest extends BaseTest {
         updateShoppingList(shoppingList).withItems(item.markCheckedNow()).build();
 
         // then
-        getShoppingList(shoppingList).buildApi()
+        viewShoppingList(shoppingList).buildApi()
                 .assertThatStartsWith("items[0].checked", "2010-10-10T13:37");
     }
 
@@ -290,7 +303,7 @@ public class ShoppingListTest extends BaseTest {
         updateShoppingList(shoppingList).withItems(item.setChecked(null)).build();
 
         // then
-        getShoppingList(shoppingList).buildApi()
+        viewShoppingList(shoppingList).buildApi()
                 .assertNotExists("items[0].checked");
     }
 

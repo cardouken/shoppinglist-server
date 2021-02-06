@@ -50,8 +50,8 @@ public class ShoppingListService {
         );
     }
 
-    public ShoppingListsResponse listAll() {
-        final List<ShoppingList> shoppingLists = shoppingListRepository.list();
+    public ShoppingListsResponse findAll() {
+        final List<ShoppingList> shoppingLists = shoppingListRepository.findAll();
         final List<ShoppingListResource> shoppingListResources = shoppingLists.stream()
                 .map(shoppingListResourceFactory::create)
                 .collect(Collectors.toList());
@@ -73,15 +73,17 @@ public class ShoppingListService {
 
         final List<Item> requestedItems = request.getItems();
         final List<Item> existingItems = shoppingList.getItems();
-        for (Item existingItem : existingItems) {
-            for (Item requestedItem : requestedItems) {
+        for (Item requestedItem : requestedItems) {
+            for (Item existingItem : existingItems) {
                 if (requestedItem.getChecked() != null && existingItem.getChecked() != null) {
                     requestedItem.setChecked(existingItem.getChecked());
                 }
             }
+            requestedItem.setId(new ObjectId());
         }
 
         shoppingList.setItems(requestedItems);
+        shoppingList.setName(request.getName());
         if (!shoppingListRepository.update(shoppingList, shoppingList.incrementVersion())) {
             throw new ApplicationLogicException(ApplicationLogicException.ErrorCode.RETRY);
         }
@@ -94,7 +96,7 @@ public class ShoppingListService {
     public void order(OrderShoppingListsRequest request) {
         final List<ObjectId> requestedShoppingListIds = request.getShoppingListIds();
 
-        final List<ShoppingList> shoppingLists = shoppingListRepository.list();
+        final List<ShoppingList> shoppingLists = shoppingListRepository.findAll();
         final List<ObjectId> shoppingListIds = shoppingLists.stream()
                 .map(ShoppingList::getId)
                 .collect(Collectors.toList());

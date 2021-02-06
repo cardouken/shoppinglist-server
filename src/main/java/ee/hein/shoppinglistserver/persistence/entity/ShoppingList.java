@@ -22,9 +22,9 @@ public class ShoppingList {
 
     private List<Item> items;
 
-    private long version;
-
     private LocalDateTime created;
+
+    private long version;
 
     public ShoppingList() {
         this.version = 1L;
@@ -66,14 +66,6 @@ public class ShoppingList {
         return this;
     }
 
-    public long getVersion() {
-        return version;
-    }
-
-    public ShoppingList setVersion(long version) {
-        this.version = version;
-        return this;
-    }
 
     public LocalDateTime getCreated() {
         return created;
@@ -81,6 +73,15 @@ public class ShoppingList {
 
     public ShoppingList setCreated(LocalDateTime created) {
         this.created = created;
+        return this;
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public ShoppingList setVersion(long version) {
+        this.version = version;
         return this;
     }
 

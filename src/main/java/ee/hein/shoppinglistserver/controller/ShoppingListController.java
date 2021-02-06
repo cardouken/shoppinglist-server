@@ -1,9 +1,9 @@
 package ee.hein.shoppinglistserver.controller;
 
+import ee.hein.shoppinglistserver.controller.api.request.CreateShoppingListRequest;
 import ee.hein.shoppinglistserver.controller.api.request.DeleteShoppingListRequest;
 import ee.hein.shoppinglistserver.controller.api.request.OrderShoppingListsRequest;
 import ee.hein.shoppinglistserver.controller.api.request.UpdateShoppingListRequest;
-import ee.hein.shoppinglistserver.controller.api.request.CreateShoppingListRequest;
 import ee.hein.shoppinglistserver.controller.api.resource.ShoppingListResource;
 import ee.hein.shoppinglistserver.controller.response.ShoppingListsResponse;
 import ee.hein.shoppinglistserver.service.ShoppingListService;
@@ -27,32 +27,32 @@ public class ShoppingListController {
         this.shoppingListService = shoppingListService;
     }
 
-    @PostMapping(value = "/shopping-list/create")
+    @PostMapping(value = "/list/create")
     public void create(@Valid @RequestBody CreateShoppingListRequest request) {
         shoppingListService.create(request);
     }
 
-    @GetMapping(value = "/shopping-lists/list")
-    public ShoppingListsResponse getLists() {
-        return shoppingListService.listAll();
+    @GetMapping(value = "/lists/")
+    public ShoppingListsResponse getAllLists() {
+        return shoppingListService.findAll();
     }
 
-    @GetMapping(value = "/shopping-list/get/{id}")
-    public ShoppingListResource getList(@PathVariable ObjectId id) {
+    @GetMapping(value = "/list/view/{id}")
+    public ShoppingListResource view(@PathVariable ObjectId id) {
         return shoppingListService.findOne(id);
     }
 
-    @PutMapping(value = "/shopping-list/update")
+    @PutMapping(value = "/list/update")
     public void update(@Valid @RequestBody UpdateShoppingListRequest request) {
         shoppingListService.update(request);
     }
 
-    @DeleteMapping(value = "/shopping-list/delete")
+    @DeleteMapping(value = "/list/delete")
     public void delete(@Valid @RequestBody DeleteShoppingListRequest request) {
         shoppingListService.delete(request);
     }
 
-    @PutMapping(value = "/shopping-list/order")
+    @PutMapping(value = "/list/order")
     public void order(@Valid @RequestBody OrderShoppingListsRequest request) {
         shoppingListService.order(request);
     }

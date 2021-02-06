@@ -7,7 +7,7 @@ import ee.hein.shoppinglistserver.service.ShoppingListService;
 import ee.hein.shoppinglistserver.usecase.CreateItemBuilder;
 import ee.hein.shoppinglistserver.usecase.CreateShoppingListBuilder;
 import ee.hein.shoppinglistserver.usecase.DeleteShoppingListBuilder;
-import ee.hein.shoppinglistserver.usecase.GetShoppingListBuilder;
+import ee.hein.shoppinglistserver.usecase.ViewShoppingListBuilder;
 import ee.hein.shoppinglistserver.usecase.GetAllShoppingListsBuilder;
 import ee.hein.shoppinglistserver.usecase.ReorderShoppingListsBuilder;
 import ee.hein.shoppinglistserver.usecase.UpdateShoppingListBuilder;
@@ -46,8 +46,8 @@ public abstract class BaseTest {
         return new CreateShoppingListBuilder(shoppingListService, shoppingListRepository);
     }
 
-    public GetShoppingListBuilder getShoppingList(ShoppingListResource shoppingList) {
-        return new GetShoppingListBuilder(shoppingListService)
+    public ViewShoppingListBuilder viewShoppingList(ShoppingListResource shoppingList) {
+        return new ViewShoppingListBuilder(shoppingListService)
                 .setShoppingListId(shoppingList.getId());
     }
 

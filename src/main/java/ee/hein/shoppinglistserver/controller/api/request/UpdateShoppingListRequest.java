@@ -1,10 +1,12 @@
 package ee.hein.shoppinglistserver.controller.api.request;
 
 import ee.hein.shoppinglistserver.pojo.Item;
+import ee.hein.shoppinglistserver.pojo.RequestConstants;
 import org.bson.types.ObjectId;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 public class UpdateShoppingListRequest {
@@ -13,9 +15,11 @@ public class UpdateShoppingListRequest {
     private ObjectId shoppingListId;
 
     @NotNull
+    @Size(min = 1, max = RequestConstants.SHORT_TEXT_LENGTH)
     private String name;
 
     @NotEmpty
+    @Size(max = 100)
     private List<@NotNull Item> items;
 
     public ObjectId getShoppingListId() {
