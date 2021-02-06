@@ -35,7 +35,7 @@ gradle.taskGraph.whenReady {
         }
 }
 
-task stage(type: Copy) {
+task stage(type: Copy, dependsOn: [clean]) {
     from jar.archiveFile
     into project.rootDir
     rename {
