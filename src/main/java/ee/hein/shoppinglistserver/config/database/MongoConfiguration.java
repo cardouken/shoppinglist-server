@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.mongodb.MongoClientSettings.getDefaultCodecRegistry;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
@@ -28,8 +27,7 @@ public class MongoConfiguration {
     @Bean
     @Primary
     public MongoProperties mongoProperties(DatabaseProperties properties) {
-        String uri = Optional.ofNullable(System.getenv("MONGODB_URI"))
-                .orElse(String.format(properties.getConnectionString(), properties.getUsername(), properties.getPassword()));
+        String uri = String.format(properties.getConnectionString(), properties.getUsername(), properties.getPassword());
         MongoProperties mongoProperties = new MongoProperties();
         mongoProperties.setUri(uri);
         mongoProperties.setDatabase(properties.getName());
