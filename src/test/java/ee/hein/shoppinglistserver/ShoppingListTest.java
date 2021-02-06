@@ -2,9 +2,11 @@ package ee.hein.shoppinglistserver;
 
 import ee.hein.shoppinglistserver.controller.api.resource.ShoppingListResource;
 import ee.hein.shoppinglistserver.controller.response.ShoppingListsResponse;
+import ee.hein.shoppinglistserver.persistence.entity.Item;
 import junit.framework.Assert;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ShoppingListTest extends BaseTest {
@@ -28,11 +30,17 @@ public class ShoppingListTest extends BaseTest {
         final ShoppingListResource shoppingList = createShoppingList().build();
 
         // when
-        addItems(shoppingList).addItems("dildo", "rope", "chloroform").build();
+        final Item rope = new Item()
+                .setName("rope");
+
+        final Item dildo = new Item()
+                .setName("dildo")
+                .setAcquired(LocalDateTime.now());
+        addItems(shoppingList).addItems(rope, dildo).build();
 
         // then
         final ShoppingListResource shoppingListUpdated = getShoppingList(shoppingList).build();
-        Assert.assertEquals(shoppingListUpdated.getItems(), List.of("dildo", "rope", "chloroform"));
+        Assert.assertEquals(shoppingListUpdated.getItems(), List.of(rope, dildo));
     }
 
 }

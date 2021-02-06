@@ -1,6 +1,7 @@
 package ee.hein.shoppinglistserver.usecase;
 
 import ee.hein.shoppinglistserver.controller.api.request.AddItemsRequest;
+import ee.hein.shoppinglistserver.persistence.entity.Item;
 import ee.hein.shoppinglistserver.service.ShoppingListService;
 import org.bson.types.ObjectId;
 
@@ -11,7 +12,7 @@ import java.util.List;
 public class AddItemsBuilder {
 
     private final ShoppingListService shoppingListService;
-    private final List<String> items = new ArrayList<>();
+    private final List<Item> items = new ArrayList<>();
     private ObjectId shoppingListId;
 
     public AddItemsBuilder(ShoppingListService shoppingListService) {
@@ -23,7 +24,7 @@ public class AddItemsBuilder {
         return this;
     }
 
-    public AddItemsBuilder addItems(String... items) {
+    public AddItemsBuilder addItems(Item... items) {
         this.items.addAll(Arrays.asList(items));
         return this;
     }

@@ -14,7 +14,7 @@ public class ShoppingList {
     @NotNull
     private String name;
 
-    private List<String> items;
+    private List<Item> items;
 
     public ObjectId getId() {
         return id;
@@ -34,11 +34,11 @@ public class ShoppingList {
         return this;
     }
 
-    public List<String> getItems() {
+    public List<Item> getItems() {
         return items;
     }
 
-    public ShoppingList setItems(List<String> items) {
+    public ShoppingList setItems(List<Item> items) {
         this.items = items;
         return this;
     }

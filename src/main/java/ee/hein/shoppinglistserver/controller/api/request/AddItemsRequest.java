@@ -1,5 +1,6 @@
 package ee.hein.shoppinglistserver.controller.api.request;
 
+import ee.hein.shoppinglistserver.persistence.entity.Item;
 import org.bson.types.ObjectId;
 
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.List;
 public class AddItemsRequest {
 
     private ObjectId shoppingListId;
-    private List<String> items;
+    private List<Item> items;
 
     public ObjectId getShoppingListId() {
         return shoppingListId;
@@ -18,11 +19,11 @@ public class AddItemsRequest {
         return this;
     }
 
-    public List<String> getItems() {
+    public List<Item> getItems() {
         return items;
     }
 
-    public AddItemsRequest setItems(List<String> items) {
+    public AddItemsRequest setItems(List<Item> items) {
         this.items = items;
         return this;
     }

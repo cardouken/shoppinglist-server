@@ -1,5 +1,6 @@
 package ee.hein.shoppinglistserver.persistence.entity.factory;
 
+import ee.hein.shoppinglistserver.persistence.entity.Item;
 import ee.hein.shoppinglistserver.persistence.entity.ShoppingList;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Component;
@@ -10,7 +11,7 @@ import java.util.Optional;
 @Component
 public class ShoppingListEntityFactory {
 
-    public ShoppingList create(String name, List<String> items) {
+    public ShoppingList create(String name, List<Item> items) {
         if (name == null) {
             return null;
         }
