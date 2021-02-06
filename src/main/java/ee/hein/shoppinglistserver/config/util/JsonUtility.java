@@ -1,4 +1,4 @@
-package ee.hein.shoppinglistserver.util;
+package ee.hein.shoppinglistserver.config.util;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -30,7 +30,7 @@ public class JsonUtility {
     private static final String DATETIME_JSON_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     private static final ObjectMapper mapper;
 
-    static class BsonModule extends SimpleModule {
+    private static class BsonModule extends SimpleModule {
         public BsonModule() {
             super("ObjectId serialization module");
             addSerializer(new ObjectIdSerializer(ObjectId.class));
@@ -38,7 +38,7 @@ public class JsonUtility {
         }
     }
 
-    static class ObjectIdSerializer extends StdSerializer<ObjectId> {
+    private static class ObjectIdSerializer extends StdSerializer<ObjectId> {
         public ObjectIdSerializer(Class<ObjectId> t) {
             super(t);
         }
@@ -49,7 +49,7 @@ public class JsonUtility {
         }
     }
 
-    static class ObjectIdDeserializer extends StdDeserializer<ObjectId> {
+    private static class ObjectIdDeserializer extends StdDeserializer<ObjectId> {
         public ObjectIdDeserializer(Class<?> t) {
             super(t);
         }
@@ -91,6 +91,10 @@ public class JsonUtility {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static ObjectMapper getMapper() {
+        return mapper;
     }
 
 }

@@ -1,5 +1,7 @@
 package ee.hein.shoppinglistserver.util;
 
+import ee.hein.shoppinglistserver.config.util.JsonUtility;
+
 public interface TestActionBuilder<T> {
 
     T build();

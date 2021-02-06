@@ -3,6 +3,8 @@ package ee.hein.shoppinglistserver.config.properties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
+import java.util.Optional;
+
 @ConfigurationProperties(prefix = "shoppinglist.database")
 public class DatabaseProperties {
 
@@ -20,7 +22,8 @@ public class DatabaseProperties {
     }
 
     public String getConnectionString() {
-        return connectionString;
+        return Optional.ofNullable(System.getenv("MONGODB_URI"))
+                .orElse(connectionString);
     }
 
     public String getUsername() {
