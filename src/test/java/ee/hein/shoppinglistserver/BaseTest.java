@@ -33,7 +33,6 @@ public abstract class BaseTest {
     @Autowired
     private ShoppingListRepository shoppingListRepository;
 
-
     @BeforeEach
     public void beforeMethod() {
         mongoTestService.emptyKeyspace();
