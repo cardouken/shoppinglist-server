@@ -13,7 +13,6 @@ import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Profile;
 
 import java.util.List;
 
@@ -35,7 +34,6 @@ public class MongoConfiguration {
     }
 
     @Bean
-    @Profile("!test")
     public MongoService mongoService(MongoClient mongoClient, MongoProperties mongoProperties) {
         return new MongoService(mongoClient, mongoProperties.getDatabase());
     }
