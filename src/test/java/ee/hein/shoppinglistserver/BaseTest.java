@@ -7,22 +7,18 @@ import ee.hein.shoppinglistserver.service.ShoppingListService;
 import ee.hein.shoppinglistserver.usecase.CreateItemBuilder;
 import ee.hein.shoppinglistserver.usecase.CreateShoppingListBuilder;
 import ee.hein.shoppinglistserver.usecase.DeleteShoppingListBuilder;
-import ee.hein.shoppinglistserver.usecase.ViewShoppingListBuilder;
 import ee.hein.shoppinglistserver.usecase.GetAllShoppingListsBuilder;
 import ee.hein.shoppinglistserver.usecase.ReorderShoppingListsBuilder;
 import ee.hein.shoppinglistserver.usecase.UpdateShoppingListBuilder;
+import ee.hein.shoppinglistserver.usecase.ViewShoppingListBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 @ContextConfiguration(classes = ShoppinglistServerApplication.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestPropertySource(properties = {
-        "jasypt.encryptor.password = devonly",
-})
 @ActiveProfiles(BaseTest.TEST_PROFILE)
 public abstract class BaseTest {
 
