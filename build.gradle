@@ -29,6 +29,13 @@ test {
     useJUnitPlatform()
 }
 
+gradle.taskGraph.whenReady {
+    taskGraph ->
+        if (taskGraph.hasTask(stage)) {
+            test.enabled = false
+        }
+}
+
 task stage(type: Copy, dependsOn: [clean, build]) {
     from jar.archiveFile
     into project.rootDir
