@@ -28,7 +28,14 @@ test {
     useJUnitPlatform()
 }
 
-task stage(type: Copy, dependsOn: [clean, build]) {
+gradle.taskGraph.whenReady {
+    taskGraph ->
+        if (taskGraph.hasTask(stage)) {
+            test.enabled = false
+        }
+}
+
+task stage(type: Copy) {
     from jar.archiveFile
     into project.rootDir
     rename {

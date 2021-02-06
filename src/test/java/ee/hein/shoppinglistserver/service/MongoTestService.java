@@ -15,9 +15,9 @@ public class MongoTestService extends MongoService {
     @Autowired
     public MongoTestService(MongoClient mongoClient, MongoProperties mongoProperties) {
         super(mongoClient, mongoProperties.getDatabase());
-//        if (mongoProperties.getUri().contains("localhost") || mongoProperties.getUri().contains("127.0.0.1")) {
-//            database.drop();
-//        }
+        if (mongoProperties.getUri().contains("localhost") || mongoProperties.getUri().contains("127.0.0.1")) {
+            database.drop();
+        }
     }
 
     public void emptyKeyspace() {
