@@ -1,5 +1,4 @@
-name: Java CI with Gradle
-
+name: Gradle Build
 on:
   push:
     branches: [ master ]
