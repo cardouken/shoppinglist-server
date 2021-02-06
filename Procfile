@@ -1,0 +1,1 @@
+web: java -jar build/libs/shoppinglist-server-1.0.0
