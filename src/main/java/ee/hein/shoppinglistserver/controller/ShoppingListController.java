@@ -38,7 +38,7 @@ public class ShoppingListController {
         return shoppingListService.get(id);
     }
 
-    @PostMapping
+    @PostMapping("/shoppinglist/add-items")
     public void addItems(@Valid @RequestBody AddItemsRequest request) {
         shoppingListService.addItems(request);
     }
